@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package objectstore;
+option java_package = "net.conradwood.golang.apis.objectstore";
+import "golang.conradwood.net/apis/common/common.proto";
+
+// database object
+message ObjectMeta {
+  uint64 ID = 1;
+  // the key under with which the client knows it
+  string Key = 2;
+  // version, normally 0. but we _can_ in future version stuff
+  uint64 Version = 3;
+  // the service who submitted it
+  string Service = 4;
+  // the user who submitted it
+  string Creator = 5;
+  // when was it last retrieved? (unix timestamp)
+  uint32 LastRetrieved = 6;
+  // when was it created? (unix timestamp)
+  uint32 Created = 7;
+  // when was it updated? (unix timestamp)
+  uint32 LastUpdated = 8;
+  // the key under which to find it in the store (e.g. a filename)
+  string StoreKey = 9;
+  // a store_id (which store is it in?)
+  uint32 StoreID = 10;
+  uint32 Expiry = 11; // 0 == indefinitely, otherwise unix epoch
+}
+
+message PutWithIDRequest {
+  string ID = 1;
+  bytes Content = 2;
+  uint32 Expiry = 3; // 0 == indefinitely, otherwise unix epoch
+}
+message GetRequest {
+  string ID = 1;
+}
+message Object {
+  string ID = 1;
+  bytes Content = 2;
+}
+
+message ListResponse {
+  repeated ObjectMeta Objects = 1;
+}
+
+message ListRequest {
+  string Prefix = 1; // list only objects with this prefix
+}
+message PutResponse {
+  bool WasAdded=1; // true if it was stored
+  bool DidExist=2; // true it it already existed
+}
+message GetResponse {
+  bool DoesExist=1;
+  Object Object=2;
+}
+
+/*
+ put/get objects
+*/
+service ObjectStore {
+  // Put (with a known ID). Maximum object RPC size applies.
+  // Only suitable for tiny little objectlets
+  rpc PutWithID(PutWithIDRequest) returns (common.Void);
+  // return an object by (error if it does not exist)
+  // Maximum object RPC size applies.
+  // Only suitable for tiny little objectlets
+  rpc Get(GetRequest) returns (Object);
+  // like PutWithID, but for large objects
+  rpc LPutWithID(stream PutWithIDRequest) returns (common.Void);
+  // like Get, but for large objects
+  rpc LGet(GetRequest) returns (stream Object);
+  // get a list of objects in store
+  rpc List(ListRequest) returns (ListResponse);
+  // sync disk and db
+  rpc TriggerCheckDisk(common.Void) returns (common.Void);
+  // put an object, but only if it does not exist yet
+  rpc PutIfNotExists(PutWithIDRequest) returns (PutResponse);
+  // get an object, if it exists
+  rpc TryGet(GetRequest) returns (GetResponse);
+}
