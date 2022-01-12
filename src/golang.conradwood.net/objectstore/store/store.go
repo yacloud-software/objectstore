@@ -12,4 +12,5 @@ type Store interface {
 	Get(ctx context.Context, key string) ([]byte, bool, error)
 	Put(ctx context.Context, key string, buf []byte, expiry uint32) error
 	List(ctx context.Context, req *pb.ListRequest) ([]*pb.ObjectMeta, error)
+	Evict(ctx context.Context, key string) ([]byte, bool, error)
 }

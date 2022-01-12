@@ -56,6 +56,21 @@ func NewDiskStore(dir string) (Store, error) {
 	return res, nil
 }
 
+func (d *DiskStore) Evict(ctx context.Context, key string) ([]byte, bool, error) {
+	c, b, err := d.Get(ctx, key)
+	if err != nil {
+		return nil, false, err
+	}
+	if !b {
+		return nil, false, nil
+	}
+	// set expiry to the past:
+	err = d.Put(ctx, key, []byte{}, 1) // not 0 because that means unlimited
+	if err != nil {
+		return nil, true, err
+	}
+	return c, b, nil
+}
 func (d *DiskStore) Get(ctx context.Context, key string) ([]byte, bool, error) {
 	o, err := dbstore.ByKey(ctx, key)
 	if err != nil {

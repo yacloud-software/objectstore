@@ -178,3 +178,15 @@ func (e *objectStoreServer) TryGet(ctx context.Context, req *pb.GetRequest) (*pb
 	o := &pb.Object{ID: key, Content: c}
 	return &pb.GetResponse{DoesExist: true, Object: o}, nil
 }
+
+func (e *objectStoreServer) Evict(ctx context.Context, req *pb.EvictRequest) (*pb.GetResponse, error) {
+	c, b, err := ostore.Evict(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+	if !b {
+		return &pb.GetResponse{DoesExist: false}, nil
+	}
+	o := &pb.Object{ID: req.ID, Content: c}
+	return &pb.GetResponse{DoesExist: true, Object: o}, nil
+}
