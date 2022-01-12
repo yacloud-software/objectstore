@@ -56,7 +56,9 @@ message GetResponse {
   bool DoesExist=1;
   Object Object=2;
 }
-
+message EvictRequest {
+  string ID = 1;
+}
 /*
  put/get objects
 */
@@ -80,4 +82,6 @@ service ObjectStore {
   rpc PutIfNotExists(PutWithIDRequest) returns (PutResponse);
   // get an object, if it exists
   rpc TryGet(GetRequest) returns (GetResponse);
+  // remove an object, return object if it was present
+  rpc Evict(EvictRequest) returns (GetResponse);
 }
