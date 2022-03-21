@@ -9,7 +9,7 @@ message ObjectMeta {
   uint64 ID = 1;
   // the key under with which the client knows it
   string Key = 2;
-  // version, normally 0. but we _can_ in future version stuff
+  // Number of times this object was updates
   uint64 Version = 3;
   // the service who submitted it
   string Service = 4;
@@ -26,6 +26,8 @@ message ObjectMeta {
   // a store_id (which store is it in?)
   uint32 StoreID = 10;
   uint32 Expiry = 11; // 0 == indefinitely, otherwise unix epoch
+  // version of the STORE (global version)
+  uint64 StoreVersion=12;
 }
 
 message PutWithIDRequest {
