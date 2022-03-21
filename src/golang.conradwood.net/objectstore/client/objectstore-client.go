@@ -9,6 +9,7 @@ import (
 	ar "golang.conradwood.net/go-easyops/authremote"
 	"golang.conradwood.net/go-easyops/client"
 	"golang.conradwood.net/go-easyops/utils"
+	"io"
 	"os"
 	"time"
 )
@@ -21,6 +22,7 @@ var (
 	put        = flag.Bool("put", false, "put object")
 	list       = flag.Bool("list", false, "list objects")
 	check      = flag.Bool("check", false, "trigger a disk/db sync on server")
+	min_vers   = flag.Int("min_version", 0, "if non-zero get same or higher than this version")
 )
 
 func main() {
@@ -31,6 +33,10 @@ func main() {
 	}
 	echoClient = osclient()
 	ctx := ar.Context()
+	if *min_vers > 0 {
+		DoMinVers()
+		os.Exit(0)
+	}
 	if *check {
 		_, err := echoClient.TriggerCheckDisk(ctx, &common.Void{})
 		utils.Bail("failed to trigger check", err)
@@ -99,4 +105,21 @@ func osclient() pb.ObjectStoreClient {
 	ec := pb.NewObjectStoreClient(client.Connect("objectstore.ObjectStore"))
 	echoClient = ec
 	return echoClient
+}
+func DoMinVers() {
+	ctx := ar.Context()
+	srv, err := osclient().HigherOrSameThanVersion(ctx, &pb.ByVersionRequest{Version: uint64(*min_vers)})
+	utils.Bail("failed to query", err)
+	for {
+		m, err := srv.Recv()
+		if err == io.EOF {
+			break
+		}
+		utils.Bail("failed to receive", err)
+		fmt.Printf("Received %d objects\n", len(m.Objects))
+		for _, md := range m.Objects {
+			fmt.Printf("%15d %05d %s\n", md.ID, md.StoreVersion, md.Key)
+		}
+	}
+	fmt.Printf("Done\n")
 }
