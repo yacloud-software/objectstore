@@ -63,7 +63,7 @@ message ByVersionRequest {
   uint64 Version=1;
 }
 message KeyList {
-  repeated string IDs=1;
+  repeated ObjectMeta Objects=1;
 }
 
 /*
