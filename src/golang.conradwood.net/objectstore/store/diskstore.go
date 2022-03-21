@@ -401,7 +401,11 @@ func (e *DiskStore) HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.Obj
 	}
 	var buf []*pb.ObjectMeta
 	MAX_OBJS := 64
+	now := time.Now().Unix()
 	for _, o := range obs {
+		if o.Expiry != 0 && int64(o.Expiry) <= now {
+			continue
+		}
 		if len(buf) < MAX_OBJS {
 			buf = append(buf, o)
 		} else {
