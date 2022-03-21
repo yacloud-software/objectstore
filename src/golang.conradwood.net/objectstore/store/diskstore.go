@@ -375,3 +375,45 @@ func (d *DiskStore) clean_expired() error {
 	}
 	return nil
 }
+func (e *DiskStore) HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.ObjectStore_HigherOrSameThanVersionServer) error {
+	n := req.Version
+	s := fmt.Sprintf("select "+dbstore.SelectCols()+" from "+dbstore.Tablename()+" where version >= %d", n)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(180)*time.Second)
+	defer cancel()
+	r, err := psql.QueryContext(ctx, "select_by_version", s)
+	if err != nil {
+		return err
+	}
+	obs, err := dbstore.FromRows(ctx, r)
+	if err != nil {
+		return err
+	}
+	var buf []*pb.ObjectMeta
+	MAX_OBJS := 64
+	for _, o := range obs {
+		if len(buf) < MAX_OBJS {
+			buf = append(buf, o)
+		} else {
+			v := &pb.KeyList{}
+			for _, k := range buf {
+				v.IDs = append(v.IDs, k.Key)
+			}
+			err := srv.Send(v)
+			if err != nil {
+				return err
+			}
+			buf = buf[:0]
+		}
+	}
+	if len(buf) > 0 {
+		v := &pb.KeyList{}
+		for _, k := range buf {
+			v.IDs = append(v.IDs, k.Key)
+		}
+		err := srv.Send(v)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

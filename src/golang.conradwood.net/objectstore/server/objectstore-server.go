@@ -190,3 +190,7 @@ func (e *objectStoreServer) Evict(ctx context.Context, req *pb.EvictRequest) (*p
 	o := &pb.Object{ID: req.ID, Content: c}
 	return &pb.GetResponse{DoesExist: true, Object: o}, nil
 }
+func (e *objectStoreServer) HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.ObjectStore_HigherOrSameThanVersionServer) error {
+	return ostore.HigherOrSameThanVersion(req, srv)
+
+}
