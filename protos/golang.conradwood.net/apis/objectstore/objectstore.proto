@@ -59,6 +59,13 @@ message GetResponse {
 message EvictRequest {
   string ID = 1;
 }
+message ByVersionRequest {
+  uint64 Version=1;
+}
+message KeyList {
+  repeated string IDs=1;
+}
+
 /*
  put/get objects
 */
@@ -84,4 +91,6 @@ service ObjectStore {
   rpc TryGet(GetRequest) returns (GetResponse);
   // remove an object, return object if it was present
   rpc Evict(EvictRequest) returns (GetResponse);
+  // get all object-keys with a version higher than...
+  rpc HigherOrSameThanVersion(ByVersionRequest) returns (stream KeyList);
 }
