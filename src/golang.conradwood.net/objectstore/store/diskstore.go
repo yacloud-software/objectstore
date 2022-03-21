@@ -21,6 +21,7 @@ import (
 )
 
 var (
+	inc_store_version = flag.Bool("inc_store_version", true, "if true, increase a store version, otherwise keep it at 0")
 	auto_delete_files = flag.Bool("auto_delete_files", false, "automatically delete files which do not exist in the database. Use with caution")
 	auto_delete_rows  = flag.Bool("auto_delete_rows", false, "automatically delete rows which do not exist on disk. Use with caution")
 	dbstore           *db.DBObjectMeta
@@ -162,6 +163,11 @@ func (d *DiskStore) Put(ctx context.Context, key string, buf []byte, expiry uint
 	if err != nil {
 		return err
 	}
+	nid, err := get_next_store_version(ctx)
+	if err != nil {
+		return err
+	}
+	om.StoreVersion = nid
 	_, err = dbstore.Save(ctx, om)
 	if err != nil {
 		return err
@@ -179,6 +185,11 @@ func (d *DiskStore) update(ctx context.Context, om *pb.ObjectMeta, buf []byte, e
 	om.LastUpdated = uint32(time.Now().Unix())
 	om.Expiry = expiry
 	om.Version = om.Version + 1
+	nid, err := get_next_store_version(ctx)
+	if err != nil {
+		return err
+	}
+	om.StoreVersion = nid
 	err = dbstore.Update(ctx, om)
 	if err != nil {
 		return err
@@ -410,4 +421,25 @@ func (e *DiskStore) HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.Obj
 		}
 	}
 	return nil
+}
+
+func get_next_store_version(ctx context.Context) (uint64, error) {
+	if !*inc_store_version {
+		return 1, nil
+	}
+	rows, err := psql.QueryContext(ctx, "select_new_id", `select nextval('store_version_seq')`)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return 0, nil
+	}
+	var nid uint64
+	err = rows.Scan(&nid)
+	if err != nil {
+		return 0, err
+	}
+	return nid, nil
+
 }
