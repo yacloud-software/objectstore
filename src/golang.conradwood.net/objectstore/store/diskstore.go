@@ -394,10 +394,7 @@ func (e *DiskStore) HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.Obj
 		if len(buf) < MAX_OBJS {
 			buf = append(buf, o)
 		} else {
-			v := &pb.KeyList{}
-			for _, k := range buf {
-				v.IDs = append(v.IDs, k.Key)
-			}
+			v := &pb.KeyList{Objects: buf}
 			err := srv.Send(v)
 			if err != nil {
 				return err
@@ -406,10 +403,7 @@ func (e *DiskStore) HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.Obj
 		}
 	}
 	if len(buf) > 0 {
-		v := &pb.KeyList{}
-		for _, k := range buf {
-			v.IDs = append(v.IDs, k.Key)
-		}
+		v := &pb.KeyList{Objects: buf}
 		err := srv.Send(v)
 		if err != nil {
 			return err
