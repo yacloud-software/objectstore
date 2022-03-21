@@ -388,6 +388,14 @@ func (d *DiskStore) clean_expired() error {
 }
 func (e *DiskStore) HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.ObjectStore_HigherOrSameThanVersionServer) error {
 	n := req.Version
+	lv, err := get_store_version(srv.Context())
+	if err != nil {
+		return err
+	}
+	if lv < n {
+		// shortcut - nothing to sync
+		return nil
+	}
 	s := fmt.Sprintf("select "+dbstore.SelectCols()+" from "+dbstore.Tablename()+" where storeversion >= %d order by key", n)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(180)*time.Second)
 	defer cancel()
@@ -432,6 +440,27 @@ func get_next_store_version(ctx context.Context) (uint64, error) {
 		return 1, nil
 	}
 	rows, err := psql.QueryContext(ctx, "select_new_id", `select nextval('store_version_seq')`)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return 0, nil
+	}
+	var nid uint64
+	err = rows.Scan(&nid)
+	if err != nil {
+		return 0, err
+	}
+	return nid, nil
+
+}
+
+func get_store_version(ctx context.Context) (uint64, error) {
+	if !*inc_store_version {
+		return 1, nil
+	}
+	rows, err := psql.QueryContext(ctx, "select_current_id", `select last_value from store_version_seq`)
 	if err != nil {
 		return 0, err
 	}
