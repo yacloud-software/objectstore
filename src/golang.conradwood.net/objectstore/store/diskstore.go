@@ -377,7 +377,7 @@ func (d *DiskStore) clean_expired() error {
 }
 func (e *DiskStore) HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.ObjectStore_HigherOrSameThanVersionServer) error {
 	n := req.Version
-	s := fmt.Sprintf("select "+dbstore.SelectCols()+" from "+dbstore.Tablename()+" where version >= %d", n)
+	s := fmt.Sprintf("select "+dbstore.SelectCols()+" from "+dbstore.Tablename()+" where version >= %d order by key", n)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(180)*time.Second)
 	defer cancel()
 	r, err := psql.QueryContext(ctx, "select_by_version", s)
