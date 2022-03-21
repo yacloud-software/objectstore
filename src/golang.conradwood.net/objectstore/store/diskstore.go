@@ -21,6 +21,12 @@ import (
 )
 
 var (
+	versionGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "objectstore_version",
+			Help: "V=1 UNIT=none DESC=current storeversion",
+		},
+	)
 	inc_store_version = flag.Bool("inc_store_version", true, "if true, increase a store version, otherwise keep it at 0")
 	auto_delete_files = flag.Bool("auto_delete_files", false, "automatically delete files which do not exist in the database. Use with caution")
 	auto_delete_rows  = flag.Bool("auto_delete_rows", false, "automatically delete rows which do not exist on disk. Use with caution")
@@ -37,7 +43,7 @@ var (
 )
 
 func init() {
-	prometheus.MustRegister(consistencyCheck)
+	prometheus.MustRegister(consistencyCheck, versionGauge)
 }
 
 type DiskStore struct {
@@ -452,6 +458,7 @@ func get_next_store_version(ctx context.Context) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
+	versionGauge.Set(float64(nid))
 	return nid, nil
 
 }
@@ -473,6 +480,7 @@ func get_store_version(ctx context.Context) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
+	versionGauge.Set(float64(nid))
 	return nid, nil
 
 }
