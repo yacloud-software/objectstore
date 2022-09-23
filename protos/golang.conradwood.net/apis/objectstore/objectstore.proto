@@ -60,6 +60,7 @@ message GetResponse {
 }
 message EvictRequest {
   string ID = 1;
+  bool  ReturnObject = 2; // if true, returns the object that was evicted
 }
 message ByVersionRequest {
   uint64 Version=1;
