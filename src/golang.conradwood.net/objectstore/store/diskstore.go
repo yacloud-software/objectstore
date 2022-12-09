@@ -112,6 +112,9 @@ func (d *DiskStore) Get(ctx context.Context, key string) ([]byte, bool, error) {
 	return b, true, nil
 }
 func (d *DiskStore) Put(ctx context.Context, key string, buf []byte, expiry uint32) error {
+	if key == "" {
+		return errors.InvalidArgs(ctx, "missing key", "missing key")
+	}
 	o, err := dbstore.ByKey(ctx, key)
 	if err != nil {
 		return err
