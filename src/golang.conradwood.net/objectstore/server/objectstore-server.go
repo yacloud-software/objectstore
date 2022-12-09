@@ -133,6 +133,7 @@ func (e *objectStoreServer) LPutWithID(srv pb.ObjectStore_LPutWithIDServer) erro
 	fmt.Printf("Received %d bytes for key %s\n", len(buf), key)
 	ctx := srv.Context()
 	err = ostore.Put(ctx, key, buf, exp)
+	buf = buf[:0] // gc?
 	return err
 }
 
