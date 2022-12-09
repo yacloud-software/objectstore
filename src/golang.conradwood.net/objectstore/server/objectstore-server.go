@@ -101,6 +101,7 @@ func (e *objectStoreServer) LGet(req *pb.GetRequest, srv pb.ObjectStore_LGetServ
 			return err
 		}
 	}
+	buf = buf[:0]
 	return nil
 }
 
