@@ -113,6 +113,10 @@ func (e *objectStoreServer) LPutWithID(srv pb.ObjectStore_LPutWithIDServer) erro
 	for {
 		ct, err := srv.Recv()
 		if err == nil {
+			if srv.Context().Err() != nil {
+				err = srv.Context().Err()
+				return err
+			}
 			if ct.Expiry != 0 {
 				exp = ct.Expiry
 			}
