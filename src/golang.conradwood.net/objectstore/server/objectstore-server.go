@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"golang.conradwood.net/apis/common"
 	pb "golang.conradwood.net/apis/objectstore"
+	"golang.conradwood.net/go-easyops/auth"
 	"golang.conradwood.net/go-easyops/errors"
 	"golang.conradwood.net/go-easyops/server"
 	"golang.conradwood.net/go-easyops/utils"
@@ -134,6 +135,9 @@ func (e *objectStoreServer) LPutWithID(srv pb.ObjectStore_LPutWithIDServer) erro
 	fmt.Printf("Received %d bytes for key %s\n", len(buf), key)
 	ctx := srv.Context()
 	err = ostore.Put(ctx, key, buf, exp)
+	if err != nil {
+		fmt.Printf("Error for key \"%s\" as submitted by service %s\n", key, auth.Description(auth.GetService(srv.Context())))
+	}
 	buf = buf[:0] // gc?
 	return err
 }
