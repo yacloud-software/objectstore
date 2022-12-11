@@ -14,12 +14,13 @@ import (
 
 var (
 	fname   = flag.String("test_filename", "/tmp/cacheids.txt", "ids to test with")
-	workers = 10
+	workers = 20
 )
 
 type worker struct {
-	ch chan *work
-	wg *sync.WaitGroup
+	idx int
+	ch  chan *work
+	wg  *sync.WaitGroup
 }
 type work struct {
 	key  string
@@ -28,10 +29,12 @@ type work struct {
 
 func test_stuff() {
 	ch := make(chan *work)
-	wg := &sync.WaitGroup{}
+	wg := sync.WaitGroup{}
+	idx := 0
 	for i := 0; i < workers; i++ {
 		wg.Add(1)
-		w := &worker{wg: wg, ch: ch}
+		idx++
+		w := &worker{wg: &wg, ch: ch, idx: idx}
 		go w.test_worker()
 	}
 	l, err := utils.ReadFile(*fname)
@@ -39,6 +42,9 @@ func test_stuff() {
 	keys := strings.Split(string(l), "\n")
 	fmt.Printf("Got %d keys to operate on\n", len(keys))
 	for _, key := range keys {
+		if len(key) < 4 {
+			continue
+		}
 		uw := &work{key: key}
 		ch <- uw
 	}
@@ -50,20 +56,21 @@ func test_stuff() {
 	wg.Wait()
 }
 func (w *worker) test_worker() {
+	defer w.wg.Done()
 	for {
 		wk := <-w.ch
 		if wk.exit {
-			w.wg.Done()
 			return
 		}
+		fmt.Printf("retrieving %s\n", wk.key)
 		ctx := authremote.ContextWithTimeout(time.Duration(180) * time.Second)
 		or, err := NewObjectStoreReader(ctx, wk.key)
 		utils.Bail("failed to get objectstore reader", err)
-		outfile, err := utils.OpenWriteFile(fmt.Sprintf("/tmp/x/objs/%s.bin", wk.key))
+		outfile, err := utils.OpenWriteFile(fmt.Sprintf("/tmp/x/objs/%d.bin", w.idx))
 		utils.Bail("failed to open write file", err)
 		_, err = io.Copy(outfile, or)
 		or.Close()
 		outfile.Close()
-		utils.Bail("failed to iocopy", err)
+		utils.Bail(fmt.Sprintf("failed to iocopy \"%s\"", wk.key), err)
 	}
 }
