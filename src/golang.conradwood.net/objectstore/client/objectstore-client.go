@@ -16,6 +16,7 @@ import (
 
 var (
 	echoClient pb.ObjectStoreClient
+	test       = flag.Bool("test", false, "test stuff")
 	id         = flag.String("id", "", "id of object to set or get")
 	filename   = flag.String("filename", "/tmp/object.bin", "file to save/load from")
 	get        = flag.Bool("get", false, "get object")
