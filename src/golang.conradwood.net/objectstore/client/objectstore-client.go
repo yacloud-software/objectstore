@@ -28,6 +28,10 @@ var (
 
 func main() {
 	flag.Parse()
+	if *test {
+		test_stuff()
+		os.Exit(0)
+	}
 	if *get && *put {
 		fmt.Printf("Won't get and put at the same time. got some safety issues\n")
 		os.Exit(10)
