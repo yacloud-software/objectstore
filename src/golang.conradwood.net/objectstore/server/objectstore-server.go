@@ -207,3 +207,11 @@ func (e *objectStoreServer) HigherOrSameThanVersion(req *pb.ByVersionRequest, sr
 	return ostore.HigherOrSameThanVersion(req, srv)
 
 }
+func (e *objectStoreServer) DoesExist(ctx context.Context, req *pb.GetRequest) (*pb.ExistResponse, error) {
+	gr, err := e.TryGet(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	er := &pb.ExistResponse{ID: req.ID, DoesExist: gr.DoesExist}
+	return er, nil
+}
