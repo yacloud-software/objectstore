@@ -29,6 +29,10 @@ message ObjectMeta {
   // version of the STORE (global version)
   uint64 StoreVersion=12;
 }
+message ExistResponse {
+  string ID=1;
+  bool DoesExist=2;
+}
 
 message PutWithIDRequest {
   string ID = 1;
@@ -96,4 +100,6 @@ service ObjectStore {
   rpc Evict(EvictRequest) returns (GetResponse);
   // get all object-keys with a version higher than...
   rpc HigherOrSameThanVersion(ByVersionRequest) returns (stream KeyList);
+  // check if key exists
+  rpc DoesExist(GetRequest) returns (ExistResponse);
 }
