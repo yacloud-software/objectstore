@@ -58,7 +58,7 @@ func NewDiskStore(dir string) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	dbstore = db.NewDBObjectMeta(psql)
+	dbstore = db.DefaultDBObjectMeta()
 	go res.diskstore_cleaner()
 	return res, nil
 }
