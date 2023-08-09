@@ -18,6 +18,7 @@ import (
 )
 
 var (
+	debug  = flag.Bool("debug", false, "debug mode")
 	port   = flag.Int("port", 4100, "The grpc server port")
 	ostore store.Store
 	olock  sync.Mutex
@@ -63,7 +64,9 @@ func (e *objectStoreServer) PutWithID(ctx context.Context, req *pb.PutWithIDRequ
 
 func (e *objectStoreServer) Get(ctx context.Context, req *pb.GetRequest) (*pb.Object, error) {
 	key := req.ID
-	fmt.Printf("Getting content for key %s\n", key)
+	if *debug {
+		fmt.Printf("Getting content for key %s\n", key)
+	}
 	c, b, err := ostore.Get(ctx, key)
 	if err != nil {
 		return nil, err
@@ -77,7 +80,9 @@ func (e *objectStoreServer) Get(ctx context.Context, req *pb.GetRequest) (*pb.Ob
 
 func (e *objectStoreServer) LGet(req *pb.GetRequest, srv pb.ObjectStore_LGetServer) error {
 	key := req.ID
-	fmt.Printf("Getting content for key %s\n", key)
+	if *debug {
+		fmt.Printf("Getting content for key %s\n", key)
+	}
 	ctx := srv.Context()
 	buf, b, err := ostore.Get(ctx, req.ID)
 	if err != nil {
@@ -140,7 +145,7 @@ func (e *objectStoreServer) LPutWithID(srv pb.ObjectStore_LPutWithIDServer) erro
 	ctx := srv.Context()
 	err = ostore.Put(ctx, key, buf, exp)
 	if err != nil {
-		fmt.Printf("Error for key \"%s\" as submitted by service %s\n", key, auth.Description(auth.GetService(srv.Context())))
+		fmt.Printf("Error for key \"%s\" as submitted by service %s: %s\n", key, auth.Description(auth.GetService(srv.Context())), err)
 	}
 	buf = buf[:0] // gc?
 	return err
