@@ -143,7 +143,11 @@ func (d *DiskStore) Put(ctx context.Context, key string, buf []byte, expiry uint
 		if !utils.FileExists(d.dir + fname) {
 			b := filepath.Dir(d.dir + fname)
 			fmt.Printf("Making %s\n", b)
-			os.MkdirAll(b, 0777)
+			err := os.MkdirAll(b, 0777)
+			if err != nil {
+				fmt.Printf("failed to mkdir %s :%s\n", b, err)
+				return err
+			}
 			break
 		}
 	}
@@ -248,9 +252,11 @@ func removeExpired(in []*pb.ObjectMeta) []*pb.ObjectMeta {
 	return res
 }
 
-/******************
+/*
+*****************
 the housekeeping
-*******************/
+******************
+*/
 func (d *DiskStore) diskstore_cleaner() {
 	time.Sleep(5 * time.Second)
 	for {
