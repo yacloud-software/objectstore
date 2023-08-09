@@ -58,7 +58,10 @@ func (e *objectStoreServer) TriggerCheckDisk(ctx context.Context, req *common.Vo
 }
 func (e *objectStoreServer) PutWithID(ctx context.Context, req *pb.PutWithIDRequest) (*common.Void, error) {
 	fmt.Printf("Saving key %s\n", req.ID)
-	ostore.Put(ctx, req.ID, req.Content, req.Expiry)
+	err := ostore.Put(ctx, req.ID, req.Content, req.Expiry)
+	if err != nil {
+		return nil, err
+	}
 	return &common.Void{}, nil
 }
 
