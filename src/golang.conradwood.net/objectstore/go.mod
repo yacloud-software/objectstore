@@ -4,8 +4,8 @@ go 1.18
 
 require (
 	golang.conradwood.net/apis/common v1.1.2525
-	golang.conradwood.net/apis/objectstore v1.1.2371
-	golang.conradwood.net/go-easyops v0.1.19057
+	golang.conradwood.net/apis/objectstore v1.1.2503
+	golang.conradwood.net/go-easyops v0.1.19209
 	google.golang.org/grpc v1.57.0
 )
 
