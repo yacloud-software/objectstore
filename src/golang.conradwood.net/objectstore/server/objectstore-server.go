@@ -36,13 +36,13 @@ func main() {
 
 	sd := server.NewServerDef()
 	sd.SetPort(*port)
-	sd.Register = server.Register(
+	sd.SetRegister(server.Register(
 		func(server *grpc.Server) error {
 			e := new(objectStoreServer)
 			pb.RegisterObjectStoreServer(server, e)
 			return nil
 		},
-	)
+	))
 	err = server.ServerStartup(sd)
 	utils.Bail("Unable to start server", err)
 	os.Exit(0)
@@ -223,3 +223,4 @@ func (e *objectStoreServer) DoesExist(ctx context.Context, req *pb.GetRequest) (
 	er := &pb.ExistResponse{ID: req.ID, DoesExist: gr.DoesExist}
 	return er, nil
 }
+

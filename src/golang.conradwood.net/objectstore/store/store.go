@@ -15,3 +15,4 @@ type Store interface {
 	Evict(ctx context.Context, key string) ([]byte, bool, error)
 	HigherOrSameThanVersion(req *pb.ByVersionRequest, srv pb.ObjectStore_HigherOrSameThanVersionServer) error
 }
+
