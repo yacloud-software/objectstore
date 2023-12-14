@@ -5,7 +5,7 @@ go 1.18
 require (
 	golang.conradwood.net/apis/common v1.1.2712
 	golang.conradwood.net/apis/objectstore v1.1.2503
-	golang.conradwood.net/go-easyops v0.1.23293
+	golang.conradwood.net/go-easyops v0.1.23340
 	google.golang.org/grpc v1.60.0
 )
 
