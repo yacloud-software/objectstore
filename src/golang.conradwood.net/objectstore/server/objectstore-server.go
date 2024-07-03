@@ -18,10 +18,11 @@ import (
 )
 
 var (
-	debug  = flag.Bool("debug", false, "debug mode")
-	port   = flag.Int("port", 4100, "The grpc server port")
-	ostore store.Store
-	olock  sync.Mutex
+	use_new_streaming = flag.Bool("use_new_streaming", true, "use the new streaming code, rather than using entire file in ram")
+	debug             = flag.Bool("debug", false, "debug mode")
+	port              = flag.Int("port", 4100, "The grpc server port")
+	ostore            store.Store
+	olock             sync.Mutex
 )
 
 type objectStoreServer struct {
@@ -82,6 +83,12 @@ func (e *objectStoreServer) Get(ctx context.Context, req *pb.GetRequest) (*pb.Ob
 }
 
 func (e *objectStoreServer) LGet(req *pb.GetRequest, srv pb.ObjectStore_LGetServer) error {
+	if *use_new_streaming {
+		return e.LGet_DirectStreaming(req, srv)
+	}
+	return e.LGet_Buffered(req, srv)
+}
+func (e *objectStoreServer) LGet_Buffered(req *pb.GetRequest, srv pb.ObjectStore_LGetServer) error {
 	key := req.ID
 	if *debug {
 		fmt.Printf("Getting content for key %s\n", key)
@@ -112,6 +119,14 @@ func (e *objectStoreServer) LGet(req *pb.GetRequest, srv pb.ObjectStore_LGetServ
 	}
 	buf = buf[:0]
 	return nil
+}
+func (e *objectStoreServer) LGet_DirectStreaming(req *pb.GetRequest, srv pb.ObjectStore_LGetServer) error {
+	key := req.ID
+	if *debug {
+		fmt.Printf("Getting content for key %s\n", key)
+	}
+	ctx := srv.Context()
+	return ostore.GetStream(ctx, req.ID, srv)
 }
 
 func (e *objectStoreServer) LPutWithID(srv pb.ObjectStore_LPutWithIDServer) error {
@@ -223,10 +238,3 @@ func (e *objectStoreServer) DoesExist(ctx context.Context, req *pb.GetRequest) (
 	er := &pb.ExistResponse{ID: req.ID, DoesExist: gr.DoesExist}
 	return er, nil
 }
-
-
-
-
-
-
-

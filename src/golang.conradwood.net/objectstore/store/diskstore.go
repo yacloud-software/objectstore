@@ -11,6 +11,7 @@ import (
 	"golang.conradwood.net/go-easyops/sql"
 	"golang.conradwood.net/go-easyops/utils"
 	"golang.conradwood.net/objectstore/db"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -77,6 +78,56 @@ func (d *DiskStore) Evict(ctx context.Context, key string) ([]byte, bool, error)
 		return nil, true, err
 	}
 	return c, b, nil
+}
+
+func (d *DiskStore) GetStream(ctx context.Context, key string, srv StreamingSender) error {
+	o, err := dbstore.ByKey(ctx, key)
+	if err != nil {
+		return err
+	}
+	if o == nil || len(o) == 0 {
+		return errors.NotFound(ctx, "not found")
+	}
+	var om *pb.ObjectMeta
+	now := time.Now().Unix()
+	for _, anyos := range o {
+		if anyos.Expiry != 0 && int64(anyos.Expiry) <= now {
+			continue
+		}
+		om = anyos
+		break
+	}
+	if om == nil {
+		return errors.NotFound(ctx, "not found")
+	}
+	om.LastRetrieved = uint32(time.Now().Unix())
+	err = dbstore.Update(ctx, om)
+	if err != nil {
+		return err
+	}
+
+	//	fmt.Printf("Filename: %s\n", om.StoreKey)
+	fname := d.dir + om.StoreKey
+	fd, err := os.Open(fname)
+	if err != nil {
+		return err
+	}
+	defer fd.Close()
+
+	buf := make([]byte, 8192)
+	for {
+		n, err := fd.Read(buf)
+		if n > 0 {
+			err := srv.Send(&pb.Object{ID: key, Content: buf[:n]})
+			if err != nil {
+				return err
+			}
+		}
+		if err == io.EOF {
+			break
+		}
+	}
+	return nil
 }
 func (d *DiskStore) Get(ctx context.Context, key string) ([]byte, bool, error) {
 	o, err := dbstore.ByKey(ctx, key)
@@ -493,10 +544,3 @@ func get_store_version(ctx context.Context) (uint64, error) {
 	return nid, nil
 
 }
-
-
-
-
-
-
-
