@@ -2,10 +2,12 @@ module golang.conradwood.net/objectstore
 
 go 1.21.1
 
+toolchain go1.22.2
+
 require (
 	golang.conradwood.net/apis/common v1.1.3154
 	golang.conradwood.net/apis/objectstore v1.1.3057
-	golang.conradwood.net/go-easyops v0.1.29912
+	golang.conradwood.net/go-easyops v0.1.30265
 	google.golang.org/grpc v1.66.0
 )
 
