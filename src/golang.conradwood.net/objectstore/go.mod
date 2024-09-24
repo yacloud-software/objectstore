@@ -7,7 +7,7 @@ toolchain go1.22.2
 require (
 	golang.conradwood.net/apis/common v1.1.3196
 	golang.conradwood.net/apis/objectstore v1.1.3196
-	golang.conradwood.net/go-easyops v0.1.30299
+	golang.conradwood.net/go-easyops v0.1.30304
 	google.golang.org/grpc v1.66.0
 )
 
