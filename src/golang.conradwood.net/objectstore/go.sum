@@ -38,6 +38,8 @@ golang.conradwood.net/apis/auth v1.1.3154 h1:87h+aCu1dxwAgqnases6UMjsxD002disJFH
 golang.conradwood.net/apis/auth v1.1.3154/go.mod h1:RcNzqRt8wz/WcprREQU9nUVuipWdohqOQsk+UR6yusQ=
 golang.conradwood.net/apis/autodeployer v1.1.3071 h1:xZSFyCC5RsiYJPpqHbc4S5QQLva+OU9co6JhWoIeWkM=
 golang.conradwood.net/apis/autodeployer v1.1.3071/go.mod h1:XMoZ4G+h9GrGb6UFFUC+j5TeLMheOCjR1VWZ6JIz8Tg=
+golang.conradwood.net/apis/certmanager v1.1.3196 h1:PNEKCl7r0WVCQhjdAbJzp3cx8ioj4nWRENTbw7SNtgw=
+golang.conradwood.net/apis/certmanager v1.1.3196/go.mod h1:YjYtmYTn472FfZP2z/PEcCdFlyB7yHL89j3NG+d5oIU=
 golang.conradwood.net/apis/common v1.1.3154 h1:kquiiMaMJRna0C4OQt27waBzBIBbFNP4RLZ6Yqg4lIQ=
 golang.conradwood.net/apis/common v1.1.3154/go.mod h1:wBBgD62A4eLN7Iy0ZpzBffpLF3LXj2/QEJNpttMkKmY=
 golang.conradwood.net/apis/deploymonkey v1.1.3071 h1:rtZ/D9mQkjOmVQ3TxybK3qS02QsYFbS3dLTzl2BLbg8=
@@ -52,10 +54,12 @@ golang.conradwood.net/apis/goeasyops v1.1.3154 h1:Ah3jfLWw+5GC0WxCtah7zXs3+nEYM6
 golang.conradwood.net/apis/goeasyops v1.1.3154/go.mod h1:TcGm+StQYvmWxju03Si+OPcABySZDn2sAA3akoGPAlk=
 golang.conradwood.net/apis/grafanadata v1.1.3071 h1:TPuA1rTcOBCj3Y/vpBw7svGyKnWpwFtm39SoJtduH7s=
 golang.conradwood.net/apis/grafanadata v1.1.3071/go.mod h1:VXlYmKUVt5WoRsm9/qJr9Xet6gfSylc7BGfd2x+XRAY=
+golang.conradwood.net/apis/h2gproxy v1.1.3196 h1:c6DjQ1tfQkXhCehyFi29XRNdkcFB63iCVXPYh2jc7es=
+golang.conradwood.net/apis/h2gproxy v1.1.3196/go.mod h1:9nlrILkfV2vtAFqaCH6zzcgK7z3REUxjFWXuPyOIsgU=
 golang.conradwood.net/apis/registry v1.1.3071 h1:iy/7desfCqWqEBqntw2VRNxvyXB9Gig1PYvOkO6uUOY=
 golang.conradwood.net/apis/registry v1.1.3071/go.mod h1:/c6GEK0aPdegzjWoNnUCLJIdTt2dxMVoAjgafX+HPR8=
-golang.conradwood.net/go-easyops v0.1.30265 h1:jA9qCw7nDP87ARRO31yV231O2t6/tgljMmF1jf5ePSU=
-golang.conradwood.net/go-easyops v0.1.30265/go.mod h1:SEbCwah5Ta6ZBBF0I7153yrQF1OhnDF86fxgFdMZtNw=
+golang.conradwood.net/go-easyops v0.1.30293 h1:REOKwPTFX7uyPVhc1fMm3byAuJ1DhJOZawVLUeIBpow=
+golang.conradwood.net/go-easyops v0.1.30293/go.mod h1:SEbCwah5Ta6ZBBF0I7153yrQF1OhnDF86fxgFdMZtNw=
 golang.org/x/net v0.29.0 h1:5ORfpBpCs4HzDYoodCDBbwHzdR5UrLBZ3sOnUJmFoHo=
 golang.org/x/net v0.29.0/go.mod h1:gLkgy8jTGERgjzMic6DS9+SP0ajcu6Xu3Orq/SpETg0=
 golang.org/x/sys v0.25.0 h1:r+8e+loiHxRqhXVl6ML1nO3l1+oFoWbnlu2Ehimmi34=

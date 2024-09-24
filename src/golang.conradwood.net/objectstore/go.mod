@@ -7,7 +7,7 @@ toolchain go1.22.2
 require (
 	golang.conradwood.net/apis/common v1.1.3154
 	golang.conradwood.net/apis/objectstore v1.1.3057
-	golang.conradwood.net/go-easyops v0.1.30265
+	golang.conradwood.net/go-easyops v0.1.30293
 	google.golang.org/grpc v1.66.0
 )
 
@@ -27,12 +27,14 @@ require (
 	github.com/prometheus/procfs v0.15.1 // indirect
 	golang.conradwood.net/apis/auth v1.1.3154 // indirect
 	golang.conradwood.net/apis/autodeployer v1.1.3071 // indirect
+	golang.conradwood.net/apis/certmanager v1.1.3196 // indirect
 	golang.conradwood.net/apis/deploymonkey v1.1.3071 // indirect
 	golang.conradwood.net/apis/echoservice v1.1.3057 // indirect
 	golang.conradwood.net/apis/errorlogger v1.1.3057 // indirect
 	golang.conradwood.net/apis/framework v1.1.3057 // indirect
 	golang.conradwood.net/apis/goeasyops v1.1.3154 // indirect
 	golang.conradwood.net/apis/grafanadata v1.1.3071 // indirect
+	golang.conradwood.net/apis/h2gproxy v1.1.3196 // indirect
 	golang.conradwood.net/apis/registry v1.1.3071 // indirect
 	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
