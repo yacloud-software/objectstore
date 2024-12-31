@@ -1,12 +1,10 @@
 module golang.conradwood.net/apis/objectstore
 
-go 1.22.7
-
-toolchain go1.23.3
+go 1.22.2
 
 require (
 	github.com/golang/protobuf v1.5.4
-	golang.conradwood.net/apis/common v1.1.3522
+	golang.conradwood.net/apis/common v1.1.3552
 	golang.org/x/net v0.32.0
 	google.golang.org/grpc v1.68.1
 )
