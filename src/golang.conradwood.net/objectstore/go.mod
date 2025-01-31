@@ -5,7 +5,7 @@ go 1.22.2
 require (
 	golang.conradwood.net/apis/common v1.1.3625
 	golang.conradwood.net/apis/objectstore v1.1.3603
-	golang.conradwood.net/go-easyops v0.1.33474
+	golang.conradwood.net/go-easyops v0.1.33605
 	google.golang.org/grpc v1.69.2
 )
 
