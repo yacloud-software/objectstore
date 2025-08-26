@@ -31,12 +31,14 @@ type objectStoreServer struct {
 func main() {
 	var err error
 	flag.Parse()
+   server.SetHealth(common.Health_STARTING)
 	fmt.Printf("Starting ObjectStoreServer...\n")
 	ostore, err = store.NewDiskStore("/srv/objectstore/")
 	utils.Bail("failed to open store", err)
 
 	sd := server.NewServerDef()
 	sd.SetPort(*port)
+sd.SetOnStartupCallback(startup)
 	sd.SetRegister(server.Register(
 		func(server *grpc.Server) error {
 			e := new(objectStoreServer)
@@ -47,6 +49,9 @@ func main() {
 	err = server.ServerStartup(sd)
 	utils.Bail("Unable to start server", err)
 	os.Exit(0)
+}
+func startup() {
+	server.SetHealth(common.Health_READY)
 }
 
 /************************************
@@ -238,3 +243,6 @@ func (e *objectStoreServer) DoesExist(ctx context.Context, req *pb.GetRequest) (
 	er := &pb.ExistResponse{ID: req.ID, DoesExist: gr.DoesExist}
 	return er, nil
 }
+
+
+
